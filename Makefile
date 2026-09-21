@@ -62,8 +62,7 @@ clean-derived-data:
 	fi;
 
 setup:
-	pod install
-	cd SampleApps/$(APP_NAME) && pod install
+	xcrun swift package resolve
 
 setup-tools: install-githook
 
@@ -76,32 +75,16 @@ clean-ios-test-files:
 clean-tvos-test-files:
 	rm -rf tvosresults.xcresult
 	
-pod-install:
-	pod install --repo-update
-	cd SampleApps/$(APP_NAME) && pod install --repo-update
-
 open:
 	open $(PROJECT_NAME).xcworkspace
 
-pod-repo-update:
-	pod repo update
-	cd SampleApps/$(APP_NAME) && pod repo update
+ci-archive: setup _archive
 
-pod-update: pod-repo-update
-	pod update
-	cd SampleApps/$(APP_NAME) && pod update
-
-ci-pod-install:
-	bundle exec pod install --repo-update
-	cd SampleApps/$(APP_NAME) && bundle exec pod install --repo-update
-
-ci-archive: ci-pod-install _archive
-
-archive: pod-install _archive
+archive: setup _archive
 
 zip:
 	cd build && zip -r -X $(PROJECT_NAME).xcframework.zip $(PROJECT_NAME).xcframework/
-	swift package compute-checksum build/$(PROJECT_NAME).xcframework.zip
+	xcrun swift package compute-checksum build/$(PROJECT_NAME).xcframework.zip
 
 build-ios:
 	@echo "######################################################################"
@@ -142,48 +125,17 @@ _archive: clean build-ios build-tvos
 	-framework $(IOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(IOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
 	-framework $(TVOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(TVOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM -output ./build/$(PROJECT_NAME).xcframework
 
-test: unit-test-ios functional-test-ios unit-test-tvos functional-test-tvos
-
-unit-test-ios:
-	@echo "######################################################################"
-	@echo "### Unit Testing iOS"
-	@echo "######################################################################"
-	@$(MAKE) clean-derived-data SCHEME=UnitTests DESTINATION=$(IOS_DESTINATION)
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "UnitTests" -destination $(IOS_DESTINATION) -enableCodeCoverage YES ADB_SKIP_LINT=YES
-
-functional-test-ios:
-	@echo "######################################################################"
-	@echo "### Functional Testing iOS"
-	@echo "######################################################################"
-	@$(MAKE) clean-derived-data SCHEME=FunctionalTests DESTINATION=$(IOS_DESTINATION)
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "FunctionalTests" -destination $(IOS_DESTINATION) -enableCodeCoverage YES ADB_SKIP_LINT=YES
-
-unit-test-tvos:
-	@echo "######################################################################"
-	@echo "### Unit Testing tvOS"
-	@echo "######################################################################"
-	@$(MAKE) clean-derived-data SCHEME=UnitTests DESTINATION=$(TVOS_DESTINATION)
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "UnitTests" -destination $(TVOS_DESTINATION) -enableCodeCoverage YES ADB_SKIP_LINT=YES
-
-functional-test-tvos:
-	@echo "######################################################################"
-	@echo "### Functional Testing tvOS"
-	@echo "######################################################################"
-	@$(MAKE) clean-derived-data SCHEME=FunctionalTests DESTINATION=$(TVOS_DESTINATION)
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme "FunctionalTests" -destination $(TVOS_DESTINATION) -enableCodeCoverage YES ADB_SKIP_LINT=YES
+test: test-SPM-integration
 
 install-githook:
 	git config core.hooksPath .githooks
 
 lint-autocorrect:
-	./Pods/SwiftLint/swiftlint --fix
+	swiftlint --fix
 
 lint:
-	./Pods/SwiftLint/swiftlint lint Sources SampleApps/$(APP_NAME)
+	swiftlint lint Sources SampleApps/$(APP_NAME)
 
 test-SPM-integration:
 	sh ./Script/test-SPM.sh
-
-test-podspec:
-	sh ./Script/test-podspec.sh
  
