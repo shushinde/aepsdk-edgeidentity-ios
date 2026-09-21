@@ -37,5 +37,5 @@ jobs:
       create-github-release: ${{ github.event.inputs.create-github-release == 'true' && 'AEPEdgeIdentity' || '' }}
       tag-only: true
       simulator-platforms: 'iOS, tvOS'
-      version-validation-paths: Package.swift, AEPEdgeIdentity.xcodeproj/project.pbxproj, Sources/IdentityConstants.swift
+      version-validation-paths: AEPEdgeIdentity.xcodeproj/project.pbxproj, Sources/IdentityConstants.swift
     secrets: inherit
