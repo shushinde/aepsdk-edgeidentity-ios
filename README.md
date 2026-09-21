@@ -1,8 +1,7 @@
 # Adobe Experience Platform Edge Identity Mobile Extension
 
-[![CocoaPods](https://img.shields.io/github/v/release/adobe/aepsdk-edgeidentity-ios?label=CocoaPods&logo=apple&logoColor=white&color=orange)](https://cocoapods.org/pods/AEPEdgeIdentity)
 [![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-edgeidentity-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-edgeidentity-ios/releases)
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-edgeidentity-ios/main.svg?label=Build&logo=circleci)](https://circleci.com/gh/adobe/workflows/aepsdk-edgeidentity-ios)
+[![CircleCI](https://img.shields.io/circleci/project/github/shushinde/aepsdk-edgeidentity-ios/main.svg?label=Build&logo=circleci)](https://circleci.com/gh/shushinde/workflows/aepsdk-edgeidentity-ios)
 [![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-edgeidentity-ios/main.svg?label=Coverage&logo=codecov)](https://codecov.io/gh/adobe/aepsdk-edgeidentity-ios/branch/main)
 
 ## About this project
@@ -14,28 +13,6 @@ The AEP Edge Identity mobile extension enables handling of user identity data fr
 - Swift 5.1 (or newer)
 
 ## Installation
-
-These are currently the supported installation options:
-
-### [CocoaPods](https://guides.cocoapods.org/using/using-cocoapods.html)
-
-```ruby
-# Podfile
-use_frameworks!
-
-# for app development, include all the following pods
-target 'YOUR_TARGET_NAME' do
-	pod 'AEPEdgeIdentity'
- 	pod 'AEPCore'
- 	pod 'AEPEdge'
-end
-```
-
-Replace `YOUR_TARGET_NAME` and then, in the `Podfile` directory, type:
-
-```ruby
-$ pod install
-```
 
 ### [Swift Package Manager](https://github.com/apple/swift-package-manager)
 
@@ -78,13 +55,13 @@ This generates the xcframework under the `build` folder. Drag and drop all the `
 The first time you clone or download the project, you should run the following from the root directory to setup the environment:
 
 ~~~
-make pod-install
+make setup
 ~~~
 
 Subsequently, you can make sure your environment is updated by running the following:
 
 ~~~
-make pod-update
+swift package update
 ~~~
 
 #### Open the Xcode workspace

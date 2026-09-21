@@ -26,12 +26,6 @@ on:
         required: true
         default: true
 
-      pod-publish-extensions:
-        description: 'Publish AEPEdgeIdentity to Cocoapods.'
-        type: boolean
-        required: true
-        default: true
-
 jobs:
   release:
     permissions:
@@ -41,6 +35,5 @@ jobs:
       tag: ${{ github.event.inputs.tag }}
       xcode-version: '16.4'
       create-github-release: ${{ github.event.inputs.create-github-release == 'true' && 'AEPEdgeIdentity' || '' }}
-      pod-publish-extensions: ${{ github.event.inputs.pod-publish-extensions == 'true' && 'AEPEdgeIdentity' || '' }}
-      version-validation-paths: AEPEdgeIdentity.podspec, AEPEdgeIdentity.xcodeproj/project.pbxproj, Sources/IdentityConstants.swift
+      version-validation-paths: Package.swift, AEPEdgeIdentity.xcodeproj/project.pbxproj, Sources/IdentityConstants.swift
     secrets: inherit
