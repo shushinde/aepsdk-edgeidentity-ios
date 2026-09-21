@@ -16,18 +16,39 @@ on:
   pull_request:
 
 jobs:
-  build-and-test:
-    name: "CI"
-    uses: adobe/aepsdk-commons/.github/workflows/ios-build-and-test.yml@gha-ios-5.3.5
-    with:
-      ios-device-names: '["iPhone 16"]'
-      ios-versions: '["18.5"]'
-      tvos-device-names: '["Apple TV"]'
-      tvos-versions: '["18.5"]'
-      run-test-ios-unit: true
-      run-test-ios-functional: true
-      run-test-tvos-unit: true
-      run-test-tvos-functional: true
-      run-build-xcframework-and-app: true
-      enable-codecov: true
-    secrets: inherit
+  validate-code:
+    name: Validate Code
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.3.0'
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Resolve Swift packages
+        run: make setup
+
+      - name: Lint Source Code
+        run: make lint
+
+  test-spm:
+    name: Test SPM
+    runs-on: macos-26
+    needs: validate-code
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26.3.0'
+
+      - name: Test SPM integration
+        run: make test-SPM-integration
