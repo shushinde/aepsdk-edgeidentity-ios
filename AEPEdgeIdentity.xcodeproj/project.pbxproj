@@ -487,6 +487,9 @@
 			dependencies = (
 			);
 			name = AEPEdgeIdentity;
+			packageProductDependencies = (
+				9482A8393061104A00B34623 /* AEPCore */,
+			);
 			productName = AEPIdentityEdge;
 			productReference = D43BAB1025BBA4F700B08CC0 /* AEPEdgeIdentity.framework */;
 			productType = "com.apple.product-type.framework";
@@ -695,7 +698,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint lint --config ${SRCROOT}/.swiftlint.yml Sources\nelse\n    echo \"warning: SwiftLint is not installed.\"\nfi\n";
+			shellScript = "if [ \"${ADB_SKIP_LINT}\" = \"YES\" ]; then\n    exit 0\nfi\nif which swiftlint >/dev/null; then\n    swiftlint lint --config \"${SRCROOT}/.swiftlint.yml\" Sources\nelse\n    echo \"warning: SwiftLint is not installed.\"\nfi\n";
 		};
 		D43BAC2125BF4A3A00B08CC0 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -26,12 +26,6 @@ workflows:
       - archive-xcframework:
           requires:
             - validate-code
-          filters:
-            branches:
-              only:
-                - main
-                - staging
-                - /dev-.*/
 
 commands:
   install_dependencies:
@@ -100,3 +94,8 @@ jobs:
       - run:
           name: Build XCFramework
           command: make ci-archive
+      - run:
+          name: Zip XCFramework
+          command: make zip
+      - store_artifacts:
+          path: build/AEPEdgeIdentity.xcframework.zip

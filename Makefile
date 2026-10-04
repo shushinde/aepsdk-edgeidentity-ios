@@ -4,6 +4,7 @@ export APP_NAME = TestApp
 PROJECT_NAME = $(EXTENSION_NAME)
 TARGET_NAME_XCFRAMEWORK = $(EXTENSION_NAME).xcframework
 SCHEME_NAME_XCFRAMEWORK = $(EXTENSION_NAME)XCF
+ARCHIVE_BUILD_SETTINGS ?=
 
 CURR_DIR := ${CURDIR}
 IOS_SIMULATOR_ARCHIVE_PATH = $(CURR_DIR)/build/ios_simulator.xcarchive/Products/Library/Frameworks/
@@ -90,15 +91,15 @@ build-ios:
 	@echo "######################################################################"
 	@echo "### Building iOS archive"
 	@echo "######################################################################"
-	xcodebuild archive -workspace $(PROJECT_NAME).xcworkspace -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/ios.xcarchive" -sdk iphoneos -destination="iOS" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ADB_SKIP_LINT=YES
-	xcodebuild archive -workspace $(PROJECT_NAME).xcworkspace -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/ios_simulator.xcarchive" -sdk iphonesimulator -destination="iOS Simulator" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ADB_SKIP_LINT=YES
+	xcodebuild archive -project $(PROJECT_NAME).xcodeproj -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/ios.xcarchive" -sdk iphoneos -destination 'generic/platform=iOS' SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGNING_ALLOWED=NO ADB_SKIP_LINT=YES $(ARCHIVE_BUILD_SETTINGS)
+	xcodebuild archive -project $(PROJECT_NAME).xcodeproj -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/ios_simulator.xcarchive" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGNING_ALLOWED=NO ADB_SKIP_LINT=YES $(ARCHIVE_BUILD_SETTINGS)
 
 build-tvos:
 	@echo "######################################################################"
 	@echo "### Building tvOS archive"
 	@echo "######################################################################"
-	xcodebuild archive -workspace $(PROJECT_NAME).xcworkspace -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/tvos.xcarchive" -sdk appletvos -destination="tvOS" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ADB_SKIP_LINT=YES
-	xcodebuild archive -workspace $(PROJECT_NAME).xcworkspace -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/tvos_simulator.xcarchive" -sdk appletvsimulator -destination="tvOS Simulator" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES ADB_SKIP_LINT=YES
+	xcodebuild archive -project $(PROJECT_NAME).xcodeproj -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/tvos.xcarchive" -sdk appletvos -destination 'generic/platform=tvOS' SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGNING_ALLOWED=NO ADB_SKIP_LINT=YES $(ARCHIVE_BUILD_SETTINGS)
+	xcodebuild archive -project $(PROJECT_NAME).xcodeproj -scheme $(SCHEME_NAME_XCFRAMEWORK) -archivePath "./build/tvos_simulator.xcarchive" -sdk appletvsimulator -destination 'generic/platform=tvOS Simulator' SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGNING_ALLOWED=NO ADB_SKIP_LINT=YES $(ARCHIVE_BUILD_SETTINGS)
 
 build-app: setup
 	@echo "######################################################################"
@@ -116,14 +117,15 @@ build-app: setup
 	@echo "######################################################################"
 	xcodebuild clean build -workspace $(PROJECT_NAME).xcworkspace -scheme $(TEST_APP_TVOS_SCHEME) -destination 'generic/platform=tvOS Simulator'
 
-_archive: clean build-ios build-tvos
+_archive: clean
+	$(MAKE) build-ios build-tvos
 	@echo "######################################################################"
 	@echo "### Generating iOS and tvOS Frameworks for $(PROJECT_NAME)"
 	@echo "######################################################################"
-	xcodebuild -create-xcframework -framework $(IOS_SIMULATOR_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(IOS_SIMULATOR_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
-	-framework $(TVOS_SIMULATOR_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(TVOS_SIMULATOR_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
-	-framework $(IOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(IOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
-	-framework $(TVOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(TVOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM -output ./build/$(PROJECT_NAME).xcframework
+	xcodebuild -create-xcframework -framework "$(IOS_SIMULATOR_ARCHIVE_PATH)$(PROJECT_NAME).framework" -debug-symbols "$(IOS_SIMULATOR_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM" \
+	-framework "$(TVOS_SIMULATOR_ARCHIVE_PATH)$(PROJECT_NAME).framework" -debug-symbols "$(TVOS_SIMULATOR_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM" \
+	-framework "$(IOS_ARCHIVE_PATH)$(PROJECT_NAME).framework" -debug-symbols "$(IOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM" \
+	-framework "$(TVOS_ARCHIVE_PATH)$(PROJECT_NAME).framework" -debug-symbols "$(TVOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM" -output ./build/$(PROJECT_NAME).xcframework
 
 test: test-SPM-integration
 

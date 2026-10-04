@@ -44,11 +44,24 @@ targets: [
 
 To generate an `AEPEdgeIdentity.xcframework`, run the following command:
 
-```ruby
-$ make archive
+```sh
+make archive
+make zip
 ```
 
-This generates the xcframework under the `build` folder. Drag and drop all the `.xcframeworks` to your app target in Xcode.
+This generates `build/AEPEdgeIdentity.xcframework` and
+`build/AEPEdgeIdentity.xcframework.zip`, including iOS and tvOS device/simulator
+slices and debug symbols. The archive uses Swift Package Manager dependencies;
+CocoaPods is not required. Add the XCFramework to your app along with compatible
+Mobile Core dependency frameworks.
+
+GitHub releases attach the XCFramework zip while retaining the source tag for
+Swift Package Manager consumers. CircleCI also builds and stores the zip on
+branches to validate binary distribution independently of SPM integration.
+
+For local SDKs that no longer accept the historical deployment targets, use
+`make archive ARCHIVE_BUILD_SETTINGS="IPHONEOS_DEPLOYMENT_TARGET=15.0 TVOS_DEPLOYMENT_TARGET=15.0"`.
+This override does not change the package's supported platform minimums.
 
 ## Development
 
