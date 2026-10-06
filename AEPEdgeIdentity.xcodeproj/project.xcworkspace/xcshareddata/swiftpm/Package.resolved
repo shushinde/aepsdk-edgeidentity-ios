@@ -6,7 +6,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/shushinde/aepsdk-core-ios",
       "state" : {
-        "revision" : "83e82b7ae6dfe4adb55bc9f24d3c67e23c62ef21",
+        "revision" : "530442464baa90074f9f8e7e8c8034a06b25169a",
         "version" : "5.13.0"
       }
     },
